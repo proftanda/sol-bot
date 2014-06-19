@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>After Sol Lewitt's Wall Drawing #79</title>        <!--<script type="text/javascript" src="d3/d3.v3.js"></script>-->
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+        
+            // a straight line helper
+            lineHelper = function () {
+
+                l=[];
+                l.startX = Math.random();
+                l.startY = Math.random();
+                l.lenX = (Math.random()-0.5)*2;
+                l.lenY = (Math.random()-0.5)*2;
+                
+                return l;
+
+            }
+
+            // ten thousand straight lines
+            var dataset = function () {
+
+                lineSet = [];
+                
+                for (var i = 10000; i >= 1; i--) {
+                    lineSet.push(lineHelper());
+                };
+                
+                //console.log(lineSet);
+                return lineSet;
+            }();
+
+            //Width and height
+            var w = 800;
+            var h = 800;
+            var maxLen=100;
+
+            //Create SVG element
+            var svg = d3.select("body")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h);
+
+            // Add lines
+            //   <line x1="0" y1="0" x2="200" y2="200" style="stroke:rgb(255,0,0);stroke-width:2" />
+
+            svg.selectAll("line")
+                .data(dataset)
+                .enter()
+                .append("line")
+                .attr("stroke", "rgb(0,0,0)")
+                .attr("opacity", "0.3")
+                .attr("stroke-width", "0.25")
+                .attr("x1", function(d) { return d.startX * w; })
+                .attr("x1", function(d) { return d.startX * w; })
+                .attr("y1", function(d) { return d.startY * h; })
+                .attr("x2", function(d) { return d.startX * w + d.lenX * maxLen ; })
+                .attr("y2", function(d) { return d.startY * h + d.lenY * maxLen ; });
+                
+
+        </script>
+</html>     

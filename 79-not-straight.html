@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+       <title>After Sol Lewitt's Wall Drawing #79 Not Straight Lines</title>        <!--<script type="text/javascript" src="d3/d3.v3.js"></script>-->
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+        
+           //Width and height
+            var w = 800;
+            var h = 800;
+            var total = 10000;
+            var maxLen=40;
+            var wobble=10;
+            var segmentLen=3;
+
+
+           // a straight line helper
+            lineHelper = function () {
+
+                var l=[];
+
+                l.startX = Math.random();
+                l.startY = Math.random();
+                l.lenX = (Math.random()-0.5)*2;
+                l.lenY = (Math.random()-0.5)*2;
+                
+                return l;
+
+            }
+
+            // a wobbly line helper
+
+            wobblyPathHelper = function (l) {
+                
+                // note that d in this function is not the data object in d3
+                
+                var d = ""; // the data attribute for the path
+                var s = 0; //  number of segments
+                var lastSegment = {};
+                var nextSegment = {};
+                
+
+                // how many segments in this line?
+                var s = (Math.sqrt(l.lenY * l.lenY + l.lenX * l.lenX)*maxLen/segmentLen).toFixed(0);
+             
+                // the most recent segment
+                lastSegment.x = l.lenX * maxLen/s;
+                lastSegment.y = l.lenY * maxLen/s;
+
+                //console.log(lastSegment);
+
+                // drawSegment function with wobble
+                function drawSegment(d) {
+               
+                        nextSegment.x = (lastSegment.x) + ((Math.random()-0.5) * wobble);
+                        nextSegment.y = (lastSegment.y) + ((Math.random()-0.5) * wobble);
+                        d = d + "t" + nextSegment.x.toFixed(0) + " " + nextSegment.y.toFixed(0) + " ";
+                   
+                        return d;
+
+                };
+
+                // write starting point to data attribute
+                d = "M" + (l.startX * (w - maxLen) + maxLen/2 ).toFixed(0) + " ";
+                d = d + (l.startY * (h - maxLen) + maxLen/2 ).toFixed(0) + " ";
+
+                // write curve segments 
+                for (var i = s; i >= 1; i--) {
+                   
+                        d = drawSegment(d);
+                        lastSegment = nextSegment;
+
+                };
+
+                // return the data attribute for the path
+                return d;
+
+            }
+
+            // ten thousand straight lines
+            var dataset = function () {
+
+                var lineSet = [];
+                
+                for (var i = total; i >= 1; i--) {
+                    lineSet.push(lineHelper());
+                };
+                
+                //console.log(lineSet);
+                return lineSet;
+            }();
+
+  
+            //Create SVG element
+            var svg = d3.select("body")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h);
+
+            // Add lines
+            //   <line x1="0" y1="0" x2="200" y2="200" style="stroke:rgb(255,0,0);stroke-width:2" />
+
+            svg.selectAll("path")
+                .data(dataset)
+                .enter()
+                .append("path")
+                .attr("stroke", "rgb(0,0,0)")
+                .attr("opacity", "0.3")
+                .attr("stroke-width", "0.5")
+                .attr("fill", "none")
+                .attr("d", function(d) { 
+
+                    // construct a wobblyPath
+                    return wobblyPathHelper(d);
+
+                });
+                
+
+        </script>
+</html>     

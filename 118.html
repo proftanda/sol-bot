@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+       <title>After Sol Lewitt's Wall Drawing #118</title>
+       <!--<script type="text/javascript" src="d3/d3.v3.js"></script>-->
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+        
+            //Width and height etc
+            var w = 1200;
+            var h = 800;
+            var total = 48;
+            var points = [];
+            var lines = [];            
+
+            // random point generator
+            pointHelper = function () {
+
+                var p={};
+                
+                p.x = Math.random();
+                p.y = Math.random();
+                
+                return p;
+
+            }
+
+            // create points
+            var points = function () {
+                
+                var pointSet = [];
+
+                for (var i = total; i >= 1; i--) {
+                    pointSet.push(pointHelper());
+                };
+
+                return pointSet;
+                
+            }();
+
+            // create list of lines that are references to the points
+            // 1 to 2-n, 2 to 3-n, 3 to 4-n, etc until (n-1)
+
+            lineHelper1 = function (s) {
+
+                // interate through end points
+                for (var e = s+1; e < total; e++) {
+
+                    lineHelper2(s,e);
+
+                }
+
+            };
+
+            lineHelper2 = function (s,e) {
+
+                lines.push([points[s], points[e]]);
+            };
+
+                
+            var blank = function () {
+
+                // iterate through start points
+                for (var s = 0; s < total-1; s++) {
+
+                    lineHelper1(s);
+
+                };
+
+                return;
+                
+            }();
+
+            //console.log(lines);
+
+            
+            //Create SVG element
+            var svg = d3.select("body")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h);
+
+            // Add lines
+            //   <line x1="0" y1="0" x2="200" y2="200" style="stroke:rgb(255,0,0);stroke-width:2" />
+
+            svg.selectAll("line")
+                .data(lines)
+                .enter()
+                .append("line")
+                .attr("stroke", "rgb(0,0,0)")
+                .attr("opacity", "0.3")
+                .attr("stroke-width", "0.25")
+                .attr("x1", function(d) { return d[0].x * w; })
+                .attr("y1", function(d) { return d[0].y * h; })
+                .attr("x2", function(d) { return d[1].x * h; })
+                .attr("y2", function(d) { return d[1].y * h; });
+                
+
+        </script>
+</html>     
